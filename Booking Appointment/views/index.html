@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Booking App</title>
+    <!-- <link rel="stylesheet" href="style.css" /> -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        header {
+            background-color: brown;
+            color: white;
+            height: 69px;
+            width: 100vw;
+            padding: 4px 30px;
+        }
+
+        .container {
+            margin-top: 0px 0px;
+            width: 100vw;
+            height: 100vh;
+            background-color: cornsilk;
+            /* justify-content: center; */
+            color: blueviolet;
+            display: flex;
+            flex-direction: column;
+
+        }
+
+        .form-container {
+            margin: 0px 472px;
+            height: 250px;
+            width: 400px;
+            border: 3px solid brown;
+            /* display:flex; */
+        }
+
+        .form-details {
+            /* height: fit-content; */
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            padding: 20px 30px;
+
+        }
+
+        input {
+            margin-bottom: 10px;
+            height: 1.5rem;
+            padding: 10px;
+            font-size: 16px;
+
+        }
+
+        label {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        button {
+            margin-top: 10px;
+            width: 100px;
+            background-color: rgb(184, 164, 202);
+            color: black;
+            font-weight: bold;
+            margin-left: 100px;
+            height: 24px;
+            border: none;
+            border-radius: 15px;
+        }
+
+        button:hover {
+            background-color: blueviolet;
+        }
+
+        .user-details {
+            /* margin: auto; */
+            margin: 20px 30px;
+            display: flex;
+            /* background-color: green; */
+            width: 100vw;
+            height: 100vh;
+
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        table {
+            table-layout: fixed;
+            width: 100%;
+            height: 61%;
+        }
+
+        table,
+        th,
+        td {
+            border: 2px solid brown;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            background-color:bisque;
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        td {
+            width: 25%;
+        }
+        .btn-edit,.btn-delete{
+           margin: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Booking Appointment</h1>
+    </header>
+    <div class="container">
+        <div class="form-container">
+            <form class="form-details">
+                <label for="username">Username:</label>
+                <input id="username" type="text" />
+                <label for="email"> E-mail:</label>
+                <input id="mail" type="email" />
+                <label for="phone"> Phone Number:</label>
+                <input id="phone" type="number" />
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+        <div class="user-details" id="table1">
+            <h3><u>User Details</u></h3>
+           
+        </div>
+
+    </div>
+
+    </main>
+
+
+</body>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', async () => {
+        const userDataList = await axios.get('/get-user')
+        console.log(userDataList.data)
+
+        console.log('frontend', userDataList.data.alluserdata)
+        const userdata = userDataList.data.alluserdata
+        const table = document.createElement('table');
+        const tableHead = ['Username',
+                             'E-mail',
+                           'Contact', 
+                           'Edit Details', 
+                           'Remove Details'];
+
+        const tableHeadRow = document.createElement('tr');
+
+        // Loop through the headers in 'tableHead' and create 'th' elements for each header
+        tableHead.forEach((head) => {
+            const th = document.createElement('th');
+            th.textContent = head;
+            tableHeadRow.appendChild(th);
+        });
+
+        // Append the table head row to the table
+        table.appendChild(tableHeadRow);
+
+
+       userdata.forEach((user) => {
+            const tableDataRow = document.createElement('tr');
+
+            const usernameCell = document.createElement('td');
+            usernameCell.textContent = user.username;
+            tableDataRow.appendChild(usernameCell);
+
+            const emailCell = document.createElement('td');
+            emailCell.textContent = user.email;
+            tableDataRow.appendChild(emailCell);
+
+            const contactCell = document.createElement('td');
+            contactCell.textContent = user.phone;
+            tableDataRow.appendChild(contactCell);
+
+            const editCell = document.createElement('td');
+            let btn = document.createElement('button')
+            // Add edit functionality to 'editCell' if needed
+            btn.textContent = 'Edit';
+            btn.className='btn-edit'
+            btn.dataset.username = user.username;
+
+            editCell.appendChild(btn)
+            tableDataRow.appendChild(editCell);
+
+            const removeCell = document.createElement('td');
+            // Add remove functionality to 'removeCell' if needed
+            let btn2 = document.createElement('button')
+            btn2.textContent = 'Remove';
+            btn2.className='btn-delete';
+            btn2.dataset.username = user.username;
+            removeCell.appendChild(btn2)
+            tableDataRow.appendChild(removeCell);
+            btn2.addEventListener('click',(async(e)=>{
+                let username=e.target.dataset.username
+                console.log(username)
+                const deleteresp= await axios.delete(`/remove-user/:${username}`)
+                console.log(deleteresp)
+            }))
+
+            // Append the data row to the table
+            table.appendChild(tableDataRow);
+            
+        });
+        let parentElement=document.getElementById('table1');
+        parentElement.appendChild(table)
+    });
+
+
+
+
+
+
+        let btn = document.querySelector('button');
+        btn.addEventListener('click', async function (e) {
+            e.preventDefault();
+            let username = document.getElementById('username').value;
+            console.log('user', username);
+            let phone = document.getElementById('phone').value;
+            console.log('phone', phone);
+
+
+            let email = document.getElementById('mail').value;
+            console.log('email', email);
+            let resp = await axios.post('/', { username, email, phone })
+            console.log('frontend', resp);
+
+        })
+
+
+</script>
+
+</html>
