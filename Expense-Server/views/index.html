@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Booking App</title>
+    <!-- <link rel="stylesheet" href="style.css" /> -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        header {
+            background-color: brown;
+            color: white;
+            height: 69px;
+            width: 100vw;
+            padding: 4px 30px;
+        }
+
+        .container {
+            margin-top: 0px 0px;
+            width: 100vw;
+            height: 100vh;
+            background-color: cornsilk;
+            /* justify-content: center; */
+            color: blueviolet;
+            display: flex;
+            flex-direction: column;
+
+        }
+
+        .form-container {
+            margin: 0px 472px;
+            height: 250px;
+            width: 400px;
+            border: 3px solid brown;
+            /* display:flex; */
+        }
+
+        .form-details {
+            /* height: fit-content; */
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            padding: 20px 30px;
+
+        }
+
+        input {
+            margin-bottom: 10px;
+            height: 1.5rem;
+            padding: 10px;
+            font-size: 16px;
+
+        }
+
+        label {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        button {
+            margin-top: 10px;
+            width: 100px;
+            background-color: rgb(184, 164, 202);
+            color: black;
+            font-weight: bold;
+            margin-left: 100px;
+            height: 24px;
+            border: none;
+            border-radius: 15px;
+        }
+
+        button:hover {
+            background-color: blueviolet;
+        }
+
+        .expense-details {
+            /* margin: auto; */
+            margin: 20px 30px;
+            display: flex;
+            /* background-color: green; */
+            width: 100vw;
+            height: 100vh;
+
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        table {
+            table-layout: fixed;
+            width: 100%;
+            height: 61%;
+        }
+
+        table,
+        th,
+        td {
+            border: 2px solid brown;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            background-color:bisque;
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        td {
+            width: 25%;
+        }
+        .btn-edit,.btn-delete{
+           margin: 10px;
+        }
+        .edit-details{
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            padding: 20px 30px;
+
+
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Expense Tracker</h1>
+    </header>
+    <div class="container">
+        <div id='formContainer' class="form-container">
+            <form class="form-details">
+                <label for="expense">Expense:</label>
+                <input id="expense" type="text" />
+                <label for="amount"> Amount:</label>
+                <input id="amount" type="number" />
+                <label for="category"> Category:</label>
+                <input id="category" type="text" />
+                <button id="submitButton" type="submit">Submit</button>
+            </form>
+        </div>
+        <div class="expense-details" id="table1">
+          
+        </div>
+
+    </div>
+
+    </main>
+
+
+</body>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<script>
+
+
+function loadform(){
+    
+    document.addEventListener('DOMContentLoaded', async () => {
+        const expenseList = await axios.get('/getexpenses')
+        console.log(expenseList.data)
+
+        console.log('frontend', expenseList.data)
+        const expensedata = expenseList.data;
+        console.log('frontend data', expensedata)
+
+        const table = document.createElement('table');
+        const tableHead = ['id','Expense Type',
+                             'Amount',
+                           'Category', 
+                           'Edit Details', 
+                           'Remove Details'];
+
+        const tableHeadRow = document.createElement('tr');
+
+        // Loop through the headers in 'tableHead' and create 'th' elements for each header
+        tableHead.forEach((head) => {
+            const th = document.createElement('th');
+            th.textContent = head;
+            tableHeadRow.appendChild(th);
+        });
+
+        // Append the table head row to the table
+        table.appendChild(tableHeadRow);
+
+
+       expensedata.data.forEach((expense) => {
+            const tableDataRow = document.createElement('tr');
+
+            const idCell = document.createElement('td');
+            idCell.textContent = expense.id;
+            tableDataRow.appendChild(idCell);
+
+            const expenseCell = document.createElement('td');
+            expenseCell.textContent = expense.expense;
+            tableDataRow.appendChild(expenseCell);
+
+            const amountCell = document.createElement('td');
+            amountCell.textContent = expense.amount;
+            tableDataRow.appendChild(amountCell);
+
+            const categoryCell = document.createElement('td');
+            categoryCell.textContent = expense.category;
+            tableDataRow.appendChild(categoryCell);
+
+            const editCell = document.createElement('td');
+            let btn = document.createElement('button')
+            // Add edit functionality to 'editCell' if needed
+            btn.textContent = 'Edit';
+            btn.className='btn-edit'
+            btn.dataset.id = expense.id;
+            editCell.appendChild(btn)
+            tableDataRow.appendChild(editCell);
+
+            btn.addEventListener('click',(async(e)=>{
+                let id=e.target.dataset.id
+            
+                console.log(id)
+                const editresp= await axios.get(`/editexpense/:${id}`)
+                console.log(editresp.data.data);
+                const eid=editresp.data.data.id;
+                const expense=editresp.data.data.expense;
+                const amount=editresp.data.data.amount;
+                const category=editresp.data.data.category;
+                hideForm();
+
+                createForm(eid,expense,amount,category)                
+
+            }))
+
+            const removeCell = document.createElement('td');
+            // Add remove functionality to 'removeCell' if needed
+            let btn2 = document.createElement('button')
+            btn2.textContent = 'Remove';
+            btn2.className='btn-delete';
+            btn2.dataset.id = expense.id;
+            removeCell.appendChild(btn2)
+            tableDataRow.appendChild(removeCell);
+            btn2.addEventListener('click',(async(e)=>{
+                let id=e.target.dataset.id
+                console.log(id)
+                const deleteresp= await axios.delete(`/remove-user/:${id}`)
+                console.log(deleteresp)
+            }))
+
+            // Append the data row to the table
+            table.appendChild(tableDataRow);
+            
+        });
+        let parentElement=document.getElementById('table1');
+        parentElement.appendChild(table)
+    });
+
+
+}
+
+function showForm() {
+        const formElement = document.querySelector('.form-details');
+        formElement.style.display = 'flex';
+        loadform();
+    }
+
+    function hideForm() {
+        const formElement = document.querySelector('.form-details');
+        formElement.style.display = 'none';
+    }
+    function hideeditForm() {
+        const formElement = document.querySelector('.edit-details');
+        formElement.style.display = 'none';
+    }
+
+
+    function createForm(eid,expense,amount,category) {
+        // Create the form element
+        const formElement = document.createElement('form');
+        formElement.classList.add('edit-details');
+      // create id label
+      const idLabel = document.createElement('label');
+        idLabel.setAttribute('for', 'id');
+        idLabel.textContent = `ID:${eid}`;
+        // Create the 'Expense' label
+        const expenseLabel = document.createElement('label');
+        expenseLabel.setAttribute('for', 'uexpense');
+        expenseLabel.textContent = 'Expense:';
+
+        // Create the 'Expense' input
+        const expenseInput = document.createElement('input');
+        expenseInput.setAttribute('id', 'uexpense');
+        expenseInput.setAttribute('type', 'text');
+        expenseInput.value=expense;
+
+        // Create the 'Amount' label
+        const amountLabel = document.createElement('label');
+        amountLabel.setAttribute('for', 'uamount');
+        amountLabel.textContent = 'Amount:';
+
+        // Create the 'Amount' input
+        const amountInput = document.createElement('input');
+        amountInput.setAttribute('id', 'uamount');
+        amountInput.setAttribute('type', 'number');
+        amountInput.value=amount;
+
+        // Create the 'Category' label
+        const categoryLabel = document.createElement('label');
+        categoryLabel.setAttribute('for', 'ucategory');
+        categoryLabel.textContent = 'Category:';
+
+        // Create the 'Category' input
+        const categoryInput = document.createElement('input');
+        categoryInput.setAttribute('id', 'ucategory');
+        categoryInput.setAttribute('type', 'text');
+        categoryInput.value=category;
+
+        // Create the 'Submit' button
+        const submitButton = document.createElement('button');
+        submitButton.setAttribute('id', 'updateButton');
+        submitButton.setAttribute('type', 'submit');
+        submitButton.textContent = 'Update Details';
+        // submitButton.addEventListener('click',async(e)=>{
+        //     e.preventDefault();
+        //     let expense = document.getElementById('uexpense').value;
+        //     let amount = document.getElementById('uamount').value;
+        //     let category = document.getElementById('ucategory').value;   
+        //        console.log("expense",expense);
+
+
+        //     let resp= await axios.patch(`/updateexpenses/:${eid}`,{expense,amount,category})
+        //     console.log("update response",resp);
+            // showForm();
+        // }
+        // )
+
+        // Append all elements to the form
+        formElement.append(idLabel)
+        formElement.appendChild(expenseLabel);
+        formElement.appendChild(expenseInput);
+        formElement.appendChild(amountLabel);
+        formElement.appendChild(amountInput);
+        formElement.appendChild(categoryLabel);
+        formElement.appendChild(categoryInput);
+        formElement.appendChild(submitButton);
+        const updateButton = document.getElementById('updateButton');
+        const formContainer = document.getElementById('formContainer');
+        formContainer.appendChild(formElement);
+        hideForm();
+
+
+
+    submitButton.addEventListener('click', async (e) => {
+        e.preventDefault();
+        let expense = document.getElementById('uexpense').value;
+        let amount = document.getElementById('uamount').value;
+        let category = document.getElementById('ucategory').value;
+
+        let resp = await axios.patch(`/updateexpenses/:${eid}`, { expense, amount, category });
+        console.log("update response", resp);
+      hideeditForm();
+      showForm();
+
+        // Hide the form after updating the details
+       
+    });
+        // Append the form to the container in the HTML document
+     
+    }
+
+
+
+
+    loadform();
+
+
+
+        let btn = document.getElementById('submitButton');
+        btn.addEventListener('click', async function (e) {
+            e.preventDefault();
+            let expense = document.getElementById('expense').value;
+            let amount = document.getElementById('amount').value;
+            let category = document.getElementById('category').value;            
+            let resp = await axios.post('/', { expense, amount, category })
+            console.log('frontend', resp);
+            document.getElementById('expense').value="";
+            document.getElementById('amount').value=""
+            document.getElementById('category').value=""
+        })
+
+
+</script>
+
+</html>
