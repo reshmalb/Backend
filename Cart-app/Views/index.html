@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ecom-app</title>
+</head>
+<style>
+    .header-content{
+    height: 100px;
+    width: 100vw;
+    background-color: cyan;
+    display: flex;
+    }
+    .ul-content{
+       
+    display: flex;
+    flex-direction: row;
+    /* flex-wrap: wrap; */
+    list-style: none;
+    justify-content: space-between;
+    margin: 20px 30px;
+
+    }
+    li{
+
+    margin: 20px 50px;
+    text-decoration: none;
+    font-size: 16px;
+    font-style: bold;
+    }
+    a{
+        text-decoration: none;
+         font-size: 16px;
+    font-weight: bold;
+    }
+    .card{
+   height: 250px;
+    width: 300px;
+    background-color: bisque;
+    margin: 20px 30px;
+    border-radius: px;
+    border-radius: 20px;
+    box-shadow: rgba;
+    flex-basis: calc(33.33% - 10px); /* 33.33% to evenly distribute 3 cards, subtracting the margin */
+
+    }
+   .addtocartbutton{
+        padding: 4px;
+    margin-top: 32px;
+    margin-left: 100px;
+    background-color: lightcyan;
+    color: blue;
+    border: none;
+    }
+    .addtocartbutton:hover{
+        background-color: cyan;
+    }
+    img{
+       
+    height: 166px;
+    width: 100%;
+}
+.card-container{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+.form-container{
+    height: 400px;
+    width: 500px;
+    background-color: lightcyan;
+    display: flex;
+    justify-content: center;
+    margin: 30px 223px;
+
+  
+}
+form{
+        margin: 40px;
+    padding-bottom: 5px;
+    }
+    
+</style>
+<body>
+    <header class="header-content">
+        <nav>
+            <ul class="ul-content">
+                <li><a href="/">Home</a></li>
+                <li><a href="/shop">Shop</a></li>
+                <li><a href="/cart">Cart</a></li>
+                <li><a href="">Login</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <div class="form-container">
+            <form enctype="multipart/form-data">
+                <label for="product_title">Product Title:</label><br>
+                <input type="text" id="product_title" name="product_title" required><br><br>
+              
+                <label for="product_price">Price:</label><br>
+                <input type="number" id="product_price" name="product_price" step="0.01" required><br><br>
+              
+                <label for="product_image">Choose an Image:</label><br>
+                <input type="text" id="product_image" name="product_image" required><br><br>
+              
+                <button type="submit" id ='addButton'>Add Product</button>
+              </form>
+        </div>
+
+     
+          
+
+
+      
+
+    </main>
+
+    
+    
+</body>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+
+
+
+
+
+        let btnAdd=document.getElementById('addButton')        
+        btnAdd.addEventListener('click',async(e)=>{
+            e.preventDefault();
+        let title=document.getElementById('product_title').value;
+        let price=document.getElementById('product_price').value;
+        let fileInput=document.getElementById('product_image').value;
+
+        // let formData = new FormData();
+        //  formData.append('product_title', title);
+        //  formData.append('product_price', price);
+        //  formData.append('product_image',fileInput.files[0]); // Get the first selected file
+
+    let resp = await axios.post('/',{title,price,fileInput})
+   
+         console.log("Add product- frontend -resp",resp);
+        document.getElementById('product_title').value="";
+        document.getElementById('product_price').value="";
+         document.getElementById('product_image').value="";
+
+        })
+
+
+</script>
+</html>

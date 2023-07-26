@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ecom-app</title>
+</head>
+<style>
+    .header-content{
+    height: 100px;
+    width: 100vw;
+    background-color: cyan;
+    display: flex;
+    }
+    .ul-content{
+       
+    display: flex;
+    flex-direction: row;
+    /* flex-wrap: wrap; */
+    list-style: none;
+    justify-content: space-between;
+    margin: 20px 30px;
+
+    }
+    li{
+
+    margin: 20px 50px;
+    text-decoration: none;
+    font-size: 16px;
+    font-style: bold;
+    }
+    a{
+        text-decoration: none;
+         font-size: 16px;
+    font-weight: bold;
+    }
+    .card{
+   height: 250px;
+    width: 300px;
+    background-color: bisque;
+    margin: 20px 30px;
+    border-radius: px;
+    border-radius: 20px;
+    box-shadow: rgba;
+    flex-basis: calc(33.33% - 10px); /* 33.33% to evenly distribute 3 cards, subtracting the margin */
+
+    }
+   .addtocartbutton{
+        padding: 4px;
+    margin-top: 32px;
+    margin-left: 100px;
+    background-color: lightcyan;
+    color: blue;
+    border: none;
+    }
+    .addtocartbutton:hover{
+        background-color: cyan;
+    }
+    img{
+       
+    height: 166px;
+    width: 100%;
+}
+.card-container{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+    
+    
+</style>
+<body>
+    <header class="header-content">
+        <nav>
+            <ul class="ul-content">
+                <li><a href="/">Home</a></li>
+                <li><a href="/shop">Shop</a></li>
+                <li><a href="/cart">Cart</a></li>
+                <li><a href="">Login</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <div class="card-container">
+        
+
+        </div>
+       
+
+    </main>
+    
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+
+
+
+function createCard(id,description,price) {
+  const cardDiv = document.createElement('div');
+  cardDiv.classList.add('card');
+
+
+  const descriptionElement = document.createElement('p');
+  descriptionElement.classList.add('description');
+  descriptionElement.textContent = description;
+
+   const idElement = document.createElement('p');
+   idElement.classList.add('price');
+   idElement.textContent = id;
+  
+   const priceElement = document.createElement('p');
+   priceElement.classList.add('price');
+   priceElement.textContent = price;
+
+
+  const addToCartButton = document.createElement('button');
+  addToCartButton.classList.add('addtocartbutton');
+  addToCartButton.textContent = 'Add To Cart';
+
+  cardDiv.appendChild(idElement);
+  cardDiv.appendChild(descriptionElement);
+  cardDiv.appendChild(priceElement);
+  cardDiv.appendChild(addToCartButton);
+  return cardDiv;
+}
+
+
+
+
+function addCardsToContainer(cardData) {
+  const cardContainer = document.querySelector('.card-container');
+      cardData.forEach(cardInfo => {
+       const card = createCard(cardInfo.id,cardInfo.title,cardInfo.price);
+        cardContainer.appendChild(card);
+     });
+}
+   document.addEventListener('DOMContentLoaded',async(e)=>{
+    const resp= await axios.get('/shopdata')
+    console.log(resp)
+      const cardData=resp.data.data;
+      addCardsToContainer(cardData)
+   })
+
+
+        
+
+
+// Call the function to add cards to the container
+    </script>
+</html>

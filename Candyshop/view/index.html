@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Candy Shop</title>
+    <!-- <link rel="stylesheet" href="style.css" /> -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        header {
+            background-color: brown;
+            color: white;
+            height: 69px;
+            width: 100vw;
+            padding: 4px 30px;
+        }
+
+        .container {
+            margin-top: 0px 0px;
+            width: 100vw;
+            height: 100vh;
+            background-color: cornsilk;
+            /* justify-content: center; */
+            color: blueviolet;
+            display: flex;
+            flex-direction: column;
+
+        }
+
+        .form-container {
+            margin: 0px 472px;
+            height: 250px;
+            width: 400px;
+            border: 3px solid brown;
+            /* display:flex; */
+        }
+
+        .form-details {
+            /* height: fit-content; */
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            padding: 20px 30px;
+
+        }
+
+        input {
+            margin-bottom: 10px;
+            height: 1.5rem;
+            padding: 10px;
+            font-size: 16px;
+
+        }
+
+        label {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        button {
+            margin-top: 10px;
+            width: 100px;
+            background-color: rgb(184, 164, 202);
+            color: black;
+            font-weight: bold;
+            margin-left: 100px;
+            height: 24px;
+            border: none;
+            border-radius: 15px;
+        }
+
+        button:hover {
+            background-color: blueviolet;
+        }
+
+        .expense-details {
+            /* margin: auto; */
+            margin: 20px 30px;
+            display: flex;
+            /* background-color: green; */
+            width: 100vw;
+            height: 100vh;
+
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        table {
+            table-layout: fixed;
+            width: 100%;
+            height: 61%;
+        }
+
+        table,
+        th,
+        td {
+            border: 2px solid brown;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            background-color:bisque;
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        td {
+            width: 25%;
+        }
+        .btn-edit,.btn-delete{
+           margin: 10px;
+        }
+        .edit-details{
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            padding: 20px 30px;
+
+
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Expense Tracker</h1>
+    </header>
+    <div class="container">
+        <div id='formContainer' class="form-container">
+            <form class="form-details">
+                <label for="candy">Candy Name:</label>
+                <input id="candy" type="text" />
+                <label for="description"> Description:</label>
+                <input id="description" type="text" />
+                <label for="price"> Price:</label>
+                <input id="price" type="number" />
+                <label for="quantity"> Quantity:</label>
+                <input id="quantity" type="number" />
+             
+             
+                <button id="submitButton" type="submit">Add Product</button>
+            </form>
+        </div>
+        <div class="expense-details" id="table1">
+          
+        </div>
+
+    </div>
+
+    </main>
+
+
+</body>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<script>
+
+
+function loadform(){
+    
+    document.addEventListener('DOMContentLoaded', async () => {
+        const dataList = await axios.get('/getdata')
+        console.log(dataList.data)
+
+        console.log('frontend', dataList.data)
+        const candydata = dataList.data;
+        console.log('frontend data', candydata)
+
+        const table = document.createElement('table');
+        const tableHead = ['id',
+                            'Candy Name',
+                            'Description',
+                             'Price', 
+                           'Quantity Available', 
+                           'Buy One'
+                           ];
+
+        const tableHeadRow = document.createElement('tr');
+
+        // Loop through the headers in 'tableHead' and create 'th' elements for each header
+        tableHead.forEach((head) => {
+            const th = document.createElement('th');
+            th.textContent = head;
+            tableHeadRow.appendChild(th);
+        });
+
+        // Append the table head row to the table
+        table.appendChild(tableHeadRow);
+
+
+        candydata .data.forEach((item) => {
+            const tableDataRow = document.createElement('tr');
+
+            const idCell = document.createElement('td');
+            idCell.textContent = item.id;
+            tableDataRow.appendChild(idCell);
+
+            const candyCell = document.createElement('td');
+            candyCell.textContent = item.candyName;
+            tableDataRow.appendChild(candyCell);
+
+            const descCell = document.createElement('td');
+            descCell.textContent = item.description;
+            tableDataRow.appendChild(descCell);
+
+            const amountCell = document.createElement('td');
+            amountCell.textContent = item.price;
+            tableDataRow.appendChild(amountCell);
+
+            const quantCell = document.createElement('td');
+            quantCell.textContent = item.quantity;
+            tableDataRow.appendChild(quantCell);
+           //Buy-1
+            const BuyOneCell = document.createElement('td');
+            let btn1 = document.createElement('button')
+            btn1.textContent = 'Buy-1';
+            btn1.className='btn-edit'
+            btn1.dataset.id = item.id;
+            BuyOneCell.appendChild(btn1)
+            btn1.addEventListener('click',async(e)=>{
+                let id=e.target.dataset.id
+                const newquantity=(Number.parseInt(item.quantity)-1)
+                try{
+                    const resp= axios.patch(`/updatequantity`,{
+                        newquantity:newquantity,
+                        id:id
+                    })
+                  location.reload()
+
+                }
+                catch(error){
+                    console.log(error)
+                }
+
+            })
+
+           //Buy-2
+           const BuyTwoCell = document.createElement('td');
+            let btn2 = document.createElement('button')
+            btn2.textContent = 'Buy-2';
+            btn2.className='btn-edit'
+            btn2.dataset.id = item.id;
+            BuyOneCell.appendChild(btn2)
+       
+            btn2.addEventListener('click',async(e)=>{
+                let id=e.target.dataset.id
+                const newquantity=(Number.parseInt(item.quantity)-2)
+                try{
+                    const resp= axios.patch(`/updatequantity`,{
+                        newquantity:newquantity,
+                        id:id
+                    })
+                    console.log(resp);
+               location.reload();
+
+                }
+                catch(error){
+                    console.log(error)
+                }
+
+            })
+
+
+
+
+           const BuyThreeCell = document.createElement('td');
+            let btn3 = document.createElement('button')
+            btn3.textContent = 'Buy-3';
+            btn3.className='btn-edit'
+            btn3.dataset.id = item.id;
+            BuyOneCell.appendChild(btn3)
+            // tableDataRow.appendChild(BuyThreeCell);
+            tableDataRow.appendChild(BuyOneCell);
+
+            btn3.addEventListener('click',async(e)=>{
+                let id=e.target.dataset.id
+                const newquantity=(Number.parseInt(item.quantity)-3)
+                try{
+                    const resp= axios.patch(`/updatequantity`,{
+                        newquantity:newquantity,
+                        id:id
+                    })
+                    console.log(resp);
+
+                 location.reload();
+
+                }
+                catch(error){
+                    console.log(error)
+                }
+
+            })
+
+
+
+            // Append the data row to the table
+            table.appendChild(tableDataRow);
+            
+        });
+        let parentElement=document.getElementById('table1');
+        parentElement.appendChild(table)
+    });
+
+
+}
+loadform();
+
+        let btn = document.getElementById('submitButton');
+        btn.addEventListener('click', async function (e) {
+            e.preventDefault();
+            let candyname = document.getElementById('candy').value;
+            let description = document.getElementById('description').value;
+            let price = document.getElementById('price').value;
+            let quantity = document.getElementById('quantity').value;
+            let resp = await axios.post('/', { candyname, description, price ,quantity})
+            console.log('frontend', resp);
+            document.getElementById('candy').value="";
+            document.getElementById('description').value=""
+            document.getElementById('quantity').value=""
+            document.getElementById('price').value="";
+        })
+
+
+</script>
+
+</html>
