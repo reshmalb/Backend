@@ -4,9 +4,6 @@ const Shop=require('../model/shop')
 exports.getShopData=(req,res,next)=>{
     const filePath = path.join(__dirname, '../view', 'index.html');
     res.sendFile(filePath)
-    // next();
-
-
 }
 exports.postShopData=(req,res,next)=>{
     const candyName=req.body.candyname;
@@ -49,12 +46,12 @@ exports.getAllData=(req,res,next)=>{
 
 exports.updateQuantity=(req,res,next)=>{
     const newquantity=req.body.newquantity;
-    const cid=req.body.id;
-    console.log("newquantity",newquantity);
+    // const cid=req.body.id;
+    const id=req.params.id;
     Shop.update({
         quantity:newquantity
     },{
-        where:{id:cid}
+        where:{id:id}
     }).then(result=>{
            res.json({
    message:"data updated successfully"

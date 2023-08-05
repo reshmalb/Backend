@@ -35,7 +35,7 @@
 
         .form-container {
             margin: 0px 472px;
-            height: 250px;
+            height: 270px;
             width: 400px;
             border: 3px solid brown;
             /* display:flex; */
@@ -95,8 +95,9 @@
 
         table {
             table-layout: fixed;
-            width: 100%;
-            height: 61%;
+            width: 70%;
+            height: 30%;
+            margin-left: 100px;
         }
 
         table,
@@ -110,7 +111,7 @@
         td {
             background-color:bisque;
             padding: 10px;
-            font-size: 16px;
+            font-size: 20px;
         }
 
         td {
@@ -131,8 +132,7 @@
 </head>
 
 <body>
-    <header>
-        <h1>Expense Tracker</h1>
+    <header><h1>Candy Shop</h1>
     </header>
     <div class="container">
         <div id='formContainer' class="form-container">
@@ -230,7 +230,7 @@ function loadform(){
                 let id=e.target.dataset.id
                 const newquantity=(Number.parseInt(item.quantity)-1)
                 try{
-                    const resp= axios.patch(`/updatequantity`,{
+                    const resp= axios.patch(`/updatequantity/${id}`,{
                         newquantity:newquantity,
                         id:id
                     })
@@ -255,7 +255,7 @@ function loadform(){
                 let id=e.target.dataset.id
                 const newquantity=(Number.parseInt(item.quantity)-2)
                 try{
-                    const resp= axios.patch(`/updatequantity`,{
+                    const resp= axios.patch(`/updatequantity/${id}`,{
                         newquantity:newquantity,
                         id:id
                     })
@@ -285,7 +285,7 @@ function loadform(){
                 let id=e.target.dataset.id
                 const newquantity=(Number.parseInt(item.quantity)-3)
                 try{
-                    const resp= axios.patch(`/updatequantity`,{
+                    const resp= axios.patch(`/updatequantity/${id}`,{
                         newquantity:newquantity,
                         id:id
                     })
@@ -323,6 +323,7 @@ loadform();
             let quantity = document.getElementById('quantity').value;
             let resp = await axios.post('/', { candyname, description, price ,quantity})
             console.log('frontend', resp);
+            location.reload();
             document.getElementById('candy').value="";
             document.getElementById('description').value=""
             document.getElementById('quantity').value=""

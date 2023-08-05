@@ -1,14 +1,10 @@
 const express=require('express');
 const app=express();
 const Shop=require('./controller/shopController')
+const shopRoutes= require('./routes/shop')
 const sequelize= require ('./utils/database')
-
-
 app.use(express.json());
-app.get('/',Shop.getShopData)
-app.post('/',Shop.postShopData)
-app.get('/getdata',Shop.getAllData)
-app.patch('/updatequantity',Shop.updateQuantity)
+app.use(shopRoutes);
 
 
 app.listen(3000,'localhost',()=>{
